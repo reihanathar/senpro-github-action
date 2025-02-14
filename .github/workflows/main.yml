@@ -22,7 +22,7 @@ jobs:
    - run: npm i
    - run: npm run build
 
- deploy:
+  deploy:
     needs: test-build
     runs-on: ubuntu-latest
 
@@ -41,24 +41,23 @@ jobs:
           script: |
             eval "$(ssh-agent -s)"
             ssh-add ~/.ssh/ssh-praktikan74
-            echo "Cek folder project";
-            [ ! -d "${HOME}/senpro/497191/modul02/senpro-github-action/" ] &&
-              {
-                echo "Repository belum di-clone. Cloning...";
-                mkdir -p /senpro/497191/modul02;
-                cd ~/senpro/497191/modul02;
-                git clone https://github.com/reihanathar/senpro-github-action.git;
-                cd ~/senpro/497191/modul02/senpro-github-action; echo "Install Package dan Build Project";
-                npm install;
-                npm run build;
-              } ||
-              {
-                echo "Repository sudah ada. Building...";
-                cd ~/senpro/497191/modul02/senpro-github-action; 
-                git restore .;
-                git pull origin main;
-                echo "Install Package dan Build Project";
-                npm install;
-                npm run build;
-              }
-            
+
+            echo "Cek folder project"
+            if [ ! -d "${HOME}/senpro/497191/modul02/senpro-github-action/" ]; then
+              echo "Repository belum di-clone. Cloning..."
+              mkdir -p ${HOME}/senpro/497191/modul02
+              cd ${HOME}/senpro/497191/modul02
+              git clone https://github.com/reihanathar/senpro-github-action.git
+              cd ${HOME}/senpro/497191/modul02/senpro-github-action
+              echo "Install Package dan Build Project"
+              npm install
+              npm run build
+            else
+              echo "Repository sudah ada. Building..."
+              cd ${HOME}/senpro/497191/modul02/senpro-github-action
+              git restore .
+              git pull origin main
+              echo "Install Package dan Build Project"
+              npm install
+              npm run build
+            fi
